@@ -67,7 +67,7 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 		memcmp(&header.e_ident[EI_MAG0], ELFMAG, SELFMAG) != 0 ||
 		header.e_ident[EI_CLASS] != ELFCLASS64 ||
 		header.e_ident[EI_DATA] != ELFDATA2LSB ||
-		header.e_type != ET_EXEC ||
+		header.e_type == ET_EXEC ||
 		header.e_machine != EM_X86_64 ||
 		header.e_version != EV_CURRENT
 	) {

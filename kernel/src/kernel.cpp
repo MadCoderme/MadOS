@@ -7,6 +7,7 @@ extern "C" void _start(BootInfo* bootInfo) {
 
     GlobalRenderer.Print("Kernel Initialized");
 
+
     
     while (true);
     return;

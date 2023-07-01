@@ -1,8 +1,10 @@
 #include "kernelUtil.h"
 #include "GDT/GDT.h"
+#include "memory.h"
 
 KernelInfo kernelInfo;
 PageTableManager ptm = NULL;
+
 
 void PrepareMemory(BootInfo* bootInfo) 
 {
@@ -48,8 +50,10 @@ KernelInfo InitializeKernel(BootInfo* bootInfo)
     PrepareMemory(bootInfo);
 
     GDTDescriptor gdtDescriptor;
+    
     gdtDescriptor.Size = sizeof(GDT) - 1;
     gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
+
     setGDT(&gdtDescriptor);
 
 

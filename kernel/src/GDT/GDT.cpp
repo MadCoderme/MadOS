@@ -1,16 +1,5 @@
 #include "GDT.h"
 
-
-void* Memset(void* start, uint8_t value, size_t len) {
-    unsigned char* p = (unsigned char*)start;
-
-    while(len--) {
-        *p++ = value;
-    }
-
-    return start;
-}
-
 __attribute__((aligned(0x1000)))
 GDT DefaultGDT = {
     {0, 0, 0, 0x00, 0x00, 0}, 
@@ -25,7 +14,7 @@ void InitializeTSS()
 {
     TSS_T tss;
     TSS_T* tssPtr = &tss;
-    Memset(tssPtr, 0, sizeof(TSS64));
+    memset(tssPtr, 0, sizeof(TSS64));
     tss.ioBitmap = sizeof(TSS64);
 
     uint64_t base = (uint64_t)tssPtr;

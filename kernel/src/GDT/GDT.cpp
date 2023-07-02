@@ -15,10 +15,10 @@ void InitializeTSS()
     TSS_T tss;
     TSS_T* tssPtr = &tss;
     memset(tssPtr, 0, sizeof(TSS64));
-    tss.ioBitmap = sizeof(TSS64);
+    tss.ioBitmap = 0xdfff;
 
     uint64_t base = (uint64_t)tssPtr;
-    uint32_t limit = base + sizeof(tss) - 1;
+    uint32_t limit = sizeof(tss) - 1;
 
     DefaultGDT.TSS = {
         (uint16_t)(limit & 0xffff),

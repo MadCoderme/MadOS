@@ -1,6 +1,7 @@
 #include "kernelUtil.h"
 #include "memory.h"
 #include "GDT/GDT.h"
+#include "IDT/IDT.h"
 
 KernelInfo kernelInfo;
 PageTableManager ptm = NULL;
@@ -59,8 +60,13 @@ KernelInfo InitializeKernel(BootInfo* bootInfo)
     gdtDescriptor.Size = sizeof(GDT) - 1;
     gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
     setGDT(&gdtDescriptor);
+
+
+    InitializeIDT();
+
     asm volatile("mov %ax, 0x28");
     asm volatile("ltr %ax");
+    
 
     memset(bootInfo->frameBuffer->BaseAddress, 0, bootInfo->frameBuffer->BufferSize);
 

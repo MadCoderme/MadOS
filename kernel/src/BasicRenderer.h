@@ -2,7 +2,7 @@
 #include "math.h"
 #include "FrameBuffer.h"
 #include "font.h"
-
+#include <stdint.h>
 
 class BasicRenderer {
     public:
@@ -14,6 +14,8 @@ class BasicRenderer {
     void PutChar(char ch, unsigned int xOff, unsigned int yOff);
     void Print(const char* str);
     void PutPixel(unsigned int x, unsigned int y);
+    void Clear(uint32_t color);
+    void NextLine();
 };
 
 extern BasicRenderer* GlobalRenderer;

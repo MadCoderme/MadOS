@@ -1,9 +1,9 @@
 
 #include "BasicRenderer.h"
 
-BasicRenderer GlobalRenderer;
+BasicRenderer* GlobalRenderer;
 
-void BasicRenderer::Initialize(FrameBuffer* targetFrameBuffer, PSF1_FONT* psfFont) {
+BasicRenderer::BasicRenderer(FrameBuffer* targetFrameBuffer, PSF1_FONT* psfFont) {
     TargetFrameBuffer = targetFrameBuffer;
     Font = psfFont;
     color = 0xffffffff;

@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include <memory.h>
+#include <stddef.h>
 
 struct GDTDescriptor {
     uint16_t Size;
@@ -29,22 +29,16 @@ __attribute((aligned(0x1000)));
 
 struct TSS64 {
 	uint32_t reserved0;
-	uint64_t rsp0;
-	uint64_t rsp1;
-	uint64_t rsp2;
+	uint64_t rsp[3];
 	uint64_t reserved1;
-	uint64_t ist1;
-	uint64_t ist2;
-	uint64_t ist3;
-	uint64_t ist4;
-	uint64_t ist5;
-	uint64_t ist6;
-	uint64_t ist7;
+	uint64_t ist[7];
 	uint64_t reserved2;
 	uint16_t reserved3;
-	uint8_t ioBitmap[8192];
+	uint16_t ioBitmap;
 } __attribute__ (( packed ));
+typedef struct TSS64 TSS_T;
 
+void InitializeTSS();
 
 extern GDT DefaultGDT;
 extern "C" void setGDT(GDTDescriptor* gdtDescriptor);

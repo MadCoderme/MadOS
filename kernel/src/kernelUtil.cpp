@@ -1,6 +1,6 @@
 #include "kernelUtil.h"
-#include "GDT/GDT.h"
 #include "memory.h"
+#include "GDT/GDT.h"
 
 KernelInfo kernelInfo;
 PageTableManager ptm = NULL;
@@ -45,17 +45,22 @@ void PrepareMemory(BootInfo* bootInfo)
     kernelInfo.PTM = &ptm;
 }
 
+BasicRenderer renderer = BasicRenderer(NULL, NULL);
+
 KernelInfo InitializeKernel(BootInfo* bootInfo)
 {
+    renderer = BasicRenderer(bootInfo->frameBuffer, bootInfo->font);
+    GlobalRenderer = &renderer;
+
     PrepareMemory(bootInfo);
 
     GDTDescriptor gdtDescriptor;
-    
+    InitializeTSS();
     gdtDescriptor.Size = sizeof(GDT) - 1;
     gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
-
     setGDT(&gdtDescriptor);
-
+    asm volatile("mov %ax, 0x28");
+    asm volatile("ltr %ax");
 
     memset(bootInfo->frameBuffer->BaseAddress, 0, bootInfo->frameBuffer->BufferSize);
 

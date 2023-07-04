@@ -12,8 +12,9 @@ GDT DefaultGDT = {
 
 void InitializeTSS()
 {
-    TSS_T tss;
-    TSS_T* tssPtr = &tss;
+    TSS_T* tssPtr = (TSS_T*)GlobalAllocator.RequestPage();
+    TSS_T tss = *tssPtr;
+
     memset(tssPtr, 0, sizeof(TSS64));
     tss.ioBitmap = 0xdfff;
 

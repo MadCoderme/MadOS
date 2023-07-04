@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "../memory.h"
+#include "../paging/PageFrameAllocator.h"
 
 struct GDTDescriptor {
     uint16_t Size;

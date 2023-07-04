@@ -1,0 +1,311 @@
+#include "ISR.h"
+
+void installISR() {
+  SetDescriptor(0, (uint64_t)isr0);
+  SetDescriptor(1, (uint64_t)isr1);
+  SetDescriptor(2, (uint64_t)isr2);
+  SetDescriptor(3, (uint64_t)isr3);
+  SetDescriptor(4, (uint64_t)isr4);
+  SetDescriptor(5, (uint64_t)isr5);
+  SetDescriptor(6, (uint64_t)isr6);
+  SetDescriptor(7, (uint64_t)isr7);
+  SetDescriptor(8, (uint64_t)errorIsr8);
+  SetDescriptor(9, (uint64_t)isr9);
+  SetDescriptor(10, (uint64_t)errorIsr10);
+  SetDescriptor(11, (uint64_t)errorIsr11);
+  SetDescriptor(12, (uint64_t)errorIsr12);
+  SetDescriptor(13, (uint64_t)errorIsr13);
+  SetDescriptor(14, (uint64_t)errorIsr14);
+  SetDescriptor(15, (uint64_t)isr15);
+  SetDescriptor(16, (uint64_t)isr16);
+  SetDescriptor(17, (uint64_t)isr17);
+  SetDescriptor(18, (uint64_t)isr18);
+  SetDescriptor(19, (uint64_t)isr19);
+  SetDescriptor(20, (uint64_t)isr20);
+  SetDescriptor(21, (uint64_t)isr21);
+  SetDescriptor(22, (uint64_t)isr22);
+  SetDescriptor(23, (uint64_t)isr23);
+  SetDescriptor(24, (uint64_t)isr24);
+  SetDescriptor(25, (uint64_t)isr25);
+  SetDescriptor(26, (uint64_t)isr26);
+  SetDescriptor(27, (uint64_t)isr27);
+  SetDescriptor(28, (uint64_t)isr28);
+  SetDescriptor(29, (uint64_t)isr29);
+  SetDescriptor(30, (uint64_t)isr30);
+  SetDescriptor(31, (uint64_t)isr31);
+
+  // Remap the PIC
+  outb(0x20, 0x11);
+  outb(0xA0, 0x11);
+  outb(0x21, 0x20);
+  outb(0xA1, 0x28);
+  outb(0x21, 0x04);
+  outb(0xA1, 0x02);
+  outb(0x21, 0x01);
+  outb(0xA1, 0x01);
+  outb(0x21, 0x0);
+  outb(0xA1, 0x0);
+
+  SetDescriptor(32, (uint64_t)isr32);
+  SetDescriptor(33, (uint64_t)isr33);
+  SetDescriptor(34, (uint64_t)isr34);
+  SetDescriptor(35, (uint64_t)isr35);
+  SetDescriptor(36, (uint64_t)isr36);
+  SetDescriptor(37, (uint64_t)isr37);
+  SetDescriptor(38, (uint64_t)isr38);
+  SetDescriptor(39, (uint64_t)isr39);
+  SetDescriptor(40, (uint64_t)isr40);
+  SetDescriptor(41, (uint64_t)isr41);
+  SetDescriptor(42, (uint64_t)isr42);
+  SetDescriptor(43, (uint64_t)isr43);
+  SetDescriptor(44, (uint64_t)isr44);
+  SetDescriptor(45, (uint64_t)isr45);
+  SetDescriptor(46, (uint64_t)isr46);
+  SetDescriptor(47, (uint64_t)isr47);
+  SetDescriptor(48, (uint64_t)isr48);
+  SetDescriptor(49, (uint64_t)isr49);
+  SetDescriptor(50, (uint64_t)isr50);
+  SetDescriptor(51, (uint64_t)isr51);
+  SetDescriptor(52, (uint64_t)isr52);
+  SetDescriptor(53, (uint64_t)isr53);
+  SetDescriptor(54, (uint64_t)isr54);
+  SetDescriptor(55, (uint64_t)isr55);
+  SetDescriptor(56, (uint64_t)isr56);
+  SetDescriptor(57, (uint64_t)isr57);
+  SetDescriptor(58, (uint64_t)isr58);
+  SetDescriptor(59, (uint64_t)isr59);
+  SetDescriptor(60, (uint64_t)isr60);
+  SetDescriptor(61, (uint64_t)isr61);
+  SetDescriptor(62, (uint64_t)isr62);
+  SetDescriptor(63, (uint64_t)isr63);
+  SetDescriptor(64, (uint64_t)isr64);
+  SetDescriptor(65, (uint64_t)isr65);
+  SetDescriptor(66, (uint64_t)isr66);
+  SetDescriptor(67, (uint64_t)isr67);
+  SetDescriptor(68, (uint64_t)isr68);
+  SetDescriptor(69, (uint64_t)isr69);
+  SetDescriptor(70, (uint64_t)isr70);
+  SetDescriptor(71, (uint64_t)isr71);
+  SetDescriptor(72, (uint64_t)isr72);
+  SetDescriptor(73, (uint64_t)isr73);
+  SetDescriptor(74, (uint64_t)isr74);
+  SetDescriptor(75, (uint64_t)isr75);
+  SetDescriptor(76, (uint64_t)isr76);
+  SetDescriptor(77, (uint64_t)isr77);
+  SetDescriptor(78, (uint64_t)isr78);
+  SetDescriptor(79, (uint64_t)isr79);
+  SetDescriptor(80, (uint64_t)isr80);
+  SetDescriptor(81, (uint64_t)isr81);
+  SetDescriptor(82, (uint64_t)isr82);
+  SetDescriptor(83, (uint64_t)isr83);
+  SetDescriptor(84, (uint64_t)isr84);
+  SetDescriptor(85, (uint64_t)isr85);
+  SetDescriptor(86, (uint64_t)isr86);
+  SetDescriptor(87, (uint64_t)isr87);
+  SetDescriptor(88, (uint64_t)isr88);
+  SetDescriptor(89, (uint64_t)isr89);
+  SetDescriptor(90, (uint64_t)isr90);
+  SetDescriptor(91, (uint64_t)isr91);
+  SetDescriptor(92, (uint64_t)isr92);
+  SetDescriptor(93, (uint64_t)isr93);
+  SetDescriptor(94, (uint64_t)isr94);
+  SetDescriptor(95, (uint64_t)isr95);
+  SetDescriptor(96, (uint64_t)isr96);
+  SetDescriptor(97, (uint64_t)isr97);
+  SetDescriptor(98, (uint64_t)isr98);
+  SetDescriptor(99, (uint64_t)isr99);
+  SetDescriptor(100, (uint64_t)isr100);
+  SetDescriptor(101, (uint64_t)isr101);
+  SetDescriptor(102, (uint64_t)isr102);
+  SetDescriptor(103, (uint64_t)isr103);
+  SetDescriptor(104, (uint64_t)isr104);
+  SetDescriptor(105, (uint64_t)isr105);
+  SetDescriptor(106, (uint64_t)isr106);
+  SetDescriptor(107, (uint64_t)isr107);
+  SetDescriptor(108, (uint64_t)isr108);
+  SetDescriptor(109, (uint64_t)isr109);
+  SetDescriptor(110, (uint64_t)isr110);
+  SetDescriptor(111, (uint64_t)isr111);
+  SetDescriptor(112, (uint64_t)isr112);
+  SetDescriptor(113, (uint64_t)isr113);
+  SetDescriptor(114, (uint64_t)isr114);
+  SetDescriptor(115, (uint64_t)isr115);
+  SetDescriptor(116, (uint64_t)isr116);
+  SetDescriptor(117, (uint64_t)isr117);
+  SetDescriptor(118, (uint64_t)isr118);
+  SetDescriptor(119, (uint64_t)isr119);
+  SetDescriptor(120, (uint64_t)isr120);
+  SetDescriptor(121, (uint64_t)isr121);
+  SetDescriptor(122, (uint64_t)isr122);
+  SetDescriptor(123, (uint64_t)isr123);
+  SetDescriptor(124, (uint64_t)isr124);
+  SetDescriptor(125, (uint64_t)isr125);
+  SetDescriptor(126, (uint64_t)isr126);
+  SetDescriptor(127, (uint64_t)isr127);
+  SetDescriptor(128, (uint64_t)isr128);
+  SetDescriptor(129, (uint64_t)isr129);
+  SetDescriptor(130, (uint64_t)isr130);
+  SetDescriptor(131, (uint64_t)isr131);
+  SetDescriptor(132, (uint64_t)isr132);
+  SetDescriptor(133, (uint64_t)isr133);
+  SetDescriptor(134, (uint64_t)isr134);
+  SetDescriptor(135, (uint64_t)isr135);
+  SetDescriptor(136, (uint64_t)isr136);
+  SetDescriptor(137, (uint64_t)isr137);
+  SetDescriptor(138, (uint64_t)isr138);
+  SetDescriptor(139, (uint64_t)isr139);
+  SetDescriptor(140, (uint64_t)isr140);
+  SetDescriptor(141, (uint64_t)isr141);
+  SetDescriptor(142, (uint64_t)isr142);
+  SetDescriptor(143, (uint64_t)isr143);
+  SetDescriptor(144, (uint64_t)isr144);
+  SetDescriptor(145, (uint64_t)isr145);
+  SetDescriptor(146, (uint64_t)isr146);
+  SetDescriptor(147, (uint64_t)isr147);
+  SetDescriptor(148, (uint64_t)isr148);
+  SetDescriptor(149, (uint64_t)isr149);
+  SetDescriptor(150, (uint64_t)isr150);
+  SetDescriptor(151, (uint64_t)isr151);
+  SetDescriptor(152, (uint64_t)isr152);
+  SetDescriptor(153, (uint64_t)isr153);
+  SetDescriptor(154, (uint64_t)isr154);
+  SetDescriptor(155, (uint64_t)isr155);
+  SetDescriptor(156, (uint64_t)isr156);
+  SetDescriptor(157, (uint64_t)isr157);
+  SetDescriptor(158, (uint64_t)isr158);
+  SetDescriptor(159, (uint64_t)isr159);
+  SetDescriptor(160, (uint64_t)isr160);
+  SetDescriptor(161, (uint64_t)isr161);
+  SetDescriptor(162, (uint64_t)isr162);
+  SetDescriptor(163, (uint64_t)isr163);
+  SetDescriptor(164, (uint64_t)isr164);
+  SetDescriptor(165, (uint64_t)isr165);
+  SetDescriptor(166, (uint64_t)isr166);
+  SetDescriptor(167, (uint64_t)isr167);
+  SetDescriptor(168, (uint64_t)isr168);
+  SetDescriptor(169, (uint64_t)isr169);
+  SetDescriptor(170, (uint64_t)isr170);
+  SetDescriptor(171, (uint64_t)isr171);
+  SetDescriptor(172, (uint64_t)isr172);
+  SetDescriptor(173, (uint64_t)isr173);
+  SetDescriptor(174, (uint64_t)isr174);
+  SetDescriptor(175, (uint64_t)isr175);
+  SetDescriptor(176, (uint64_t)isr176);
+  SetDescriptor(177, (uint64_t)isr177);
+  SetDescriptor(178, (uint64_t)isr178);
+  SetDescriptor(179, (uint64_t)isr179);
+  SetDescriptor(180, (uint64_t)isr180);
+  SetDescriptor(181, (uint64_t)isr181);
+  SetDescriptor(182, (uint64_t)isr182);
+  SetDescriptor(183, (uint64_t)isr183);
+  SetDescriptor(184, (uint64_t)isr184);
+  SetDescriptor(185, (uint64_t)isr185);
+  SetDescriptor(186, (uint64_t)isr186);
+  SetDescriptor(187, (uint64_t)isr187);
+  SetDescriptor(188, (uint64_t)isr188);
+  SetDescriptor(189, (uint64_t)isr189);
+  SetDescriptor(190, (uint64_t)isr190);
+  SetDescriptor(191, (uint64_t)isr191);
+  SetDescriptor(192, (uint64_t)isr192);
+  SetDescriptor(193, (uint64_t)isr193);
+  SetDescriptor(194, (uint64_t)isr194);
+  SetDescriptor(195, (uint64_t)isr195);
+  SetDescriptor(196, (uint64_t)isr196);
+  SetDescriptor(197, (uint64_t)isr197);
+  SetDescriptor(198, (uint64_t)isr198);
+  SetDescriptor(199, (uint64_t)isr199);
+  SetDescriptor(200, (uint64_t)isr200);
+  SetDescriptor(201, (uint64_t)isr201);
+  SetDescriptor(202, (uint64_t)isr202);
+  SetDescriptor(203, (uint64_t)isr203);
+  SetDescriptor(204, (uint64_t)isr204);
+  SetDescriptor(205, (uint64_t)isr205);
+  SetDescriptor(206, (uint64_t)isr206);
+  SetDescriptor(207, (uint64_t)isr207);
+  SetDescriptor(208, (uint64_t)isr208);
+  SetDescriptor(209, (uint64_t)isr209);
+  SetDescriptor(210, (uint64_t)isr210);
+  SetDescriptor(211, (uint64_t)isr211);
+  SetDescriptor(212, (uint64_t)isr212);
+  SetDescriptor(213, (uint64_t)isr213);
+  SetDescriptor(214, (uint64_t)isr214);
+  SetDescriptor(215, (uint64_t)isr215);
+  SetDescriptor(216, (uint64_t)isr216);
+  SetDescriptor(217, (uint64_t)isr217);
+  SetDescriptor(218, (uint64_t)isr218);
+  SetDescriptor(219, (uint64_t)isr219);
+  SetDescriptor(220, (uint64_t)isr220);
+  SetDescriptor(221, (uint64_t)isr221);
+  SetDescriptor(222, (uint64_t)isr222);
+  SetDescriptor(223, (uint64_t)isr223);
+  SetDescriptor(224, (uint64_t)isr224);
+  SetDescriptor(225, (uint64_t)isr225);
+  SetDescriptor(226, (uint64_t)isr226);
+  SetDescriptor(227, (uint64_t)isr227);
+  SetDescriptor(228, (uint64_t)isr228);
+  SetDescriptor(229, (uint64_t)isr229);
+  SetDescriptor(230, (uint64_t)isr230);
+  SetDescriptor(231, (uint64_t)isr231);
+  SetDescriptor(232, (uint64_t)isr232);
+  SetDescriptor(233, (uint64_t)isr233);
+  SetDescriptor(234, (uint64_t)isr234);
+  SetDescriptor(235, (uint64_t)isr235);
+  SetDescriptor(236, (uint64_t)isr236);
+  SetDescriptor(237, (uint64_t)isr237);
+  SetDescriptor(238, (uint64_t)isr238);
+  SetDescriptor(239, (uint64_t)isr239);
+  SetDescriptor(240, (uint64_t)isr240);
+  SetDescriptor(241, (uint64_t)isr241);
+  SetDescriptor(242, (uint64_t)isr242);
+  SetDescriptor(243, (uint64_t)isr243);
+  SetDescriptor(244, (uint64_t)isr244);
+  SetDescriptor(245, (uint64_t)isr245);
+  SetDescriptor(246, (uint64_t)isr246);
+  SetDescriptor(247, (uint64_t)isr247);
+  SetDescriptor(248, (uint64_t)isr248);
+  SetDescriptor(249, (uint64_t)isr249);
+  SetDescriptor(250, (uint64_t)isr250);
+  SetDescriptor(251, (uint64_t)isr251);
+  SetDescriptor(252, (uint64_t)isr252);
+  SetDescriptor(253, (uint64_t)isr253);
+  SetDescriptor(254, (uint64_t)isr254);
+  SetDescriptor(255, (uint64_t)isr255);
+  InitializeIDT();
+}
+
+const char* Errors[] = {
+        "Division Error",
+        "Debug",
+        "Non-maskable Interrupt",
+        "Breakpoint",
+        "Overflow",
+        "Bound Range Exceeded",
+        "Invalid Opcode",
+        "Device Not Available",
+        "Double Fault",
+        "Coprocessor Segment Overrun",
+        "Invalid TSS",
+        "Segment Not Present",
+        "Stack-Segment Fault",
+        "General Protection Fault",
+        "Page Fault",
+        "Reserved",
+        "x87 Floating-Point Exception",
+        "Alignment Check",
+        "Machine Check",
+        "SIMD Floating-Point Exception",
+        "Virtualization Exception",
+        "Control Protection Exception",
+        "Reserved",
+        "Hypervisor Injection Exception",
+        "VMM Communication Exception",
+        "Security Exception",
+        "Reserved",
+        "Triple Fault",
+};
+
+extern "C" void isr_handler(int r) {
+    GlobalRenderer->Print(to_string((int64_t)r));
+    //outb(0xA0, 0x20);
+    //outb(0x20, 0x20);
+}

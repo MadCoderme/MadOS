@@ -1,7 +1,7 @@
 #include "kernelUtil.h"
 #include "memory.h"
 #include "GDT/GDT.h"
-#include "IDT/IDT.h"
+#include "IDT/ISR.h"
 
 KernelInfo kernelInfo;
 PageTableManager ptm = NULL;
@@ -62,13 +62,14 @@ KernelInfo InitializeKernel(BootInfo* bootInfo)
     setGDT(&gdtDescriptor);
 
 
-    InitializeIDT();
+    installISR();
+    asm volatile("sti");
 
-    asm volatile("mov %ax, 0x28");
-    asm volatile("ltr %ax");
+    asm volatile("mov %ax, 0x21");
+    // asm volatile("ltr %ax");
     
 
-    memset(bootInfo->frameBuffer->BaseAddress, 0, bootInfo->frameBuffer->BufferSize);
+    // memset(bootInfo->frameBuffer->BaseAddress, 0, bootInfo->frameBuffer->BufferSize);
 
     return kernelInfo;
 }

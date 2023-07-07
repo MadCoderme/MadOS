@@ -1,7 +1,8 @@
 #include "kernelUtil.h"
 #include "memory.h"
 #include "GDT/GDT.h"
-#include "IDT/ISR.h"
+#include "interrupts/IDT.h"
+#include "interrupts/pic.h"
 
 KernelInfo kernelInfo;
 PageTableManager ptm = NULL;
@@ -46,6 +47,13 @@ void PrepareMemory(BootInfo* bootInfo)
     kernelInfo.PTM = &ptm;
 }
 
+
+void PrepareInterrupts()
+{   
+    InitializeIDT();
+}
+
+
 BasicRenderer renderer = BasicRenderer(NULL, NULL);
 
 KernelInfo InitializeKernel(BootInfo* bootInfo)
@@ -61,9 +69,8 @@ KernelInfo InitializeKernel(BootInfo* bootInfo)
     gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
     setGDT(&gdtDescriptor);
 
+    PrepareInterrupts();
 
-    installISR();
-    asm volatile("sti");
 
     asm volatile("mov %ax, 0x21");
     // asm volatile("ltr %ax");

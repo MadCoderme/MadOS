@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <cpuid.h>
 #include "BasicRenderer.h"
 #include "cstr.h"
 #include "efiMemory.h"

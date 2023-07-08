@@ -143,9 +143,6 @@ extern "C" void ExceptionDump(Registers r)
         GlobalRenderer->Print(to_string((int64_t)r.ss));
         GlobalRenderer->NextLine();
 
-		outb(0xA1, 0x20);
-        outb(0x20, 0x20);
-
         asm("hlt");
     }
     else 

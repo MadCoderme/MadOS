@@ -20,7 +20,6 @@ exception%1_handler:
 
 %macro make_error_exception_handler 1
 exception%1_handler:
-        cli
         push byte %1
         jmp exception_body
 %endmacro

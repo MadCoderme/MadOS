@@ -4,7 +4,7 @@
 [extern ExceptionDump]
 
 default_exception_handler:
-    jmp $
+    iretq
 
 default_interrupt_handler:
     iretq

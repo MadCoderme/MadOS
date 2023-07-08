@@ -1,5 +1,6 @@
 #include "IDT.h"
 #include "pic.h"
+#include "../IO.h"
 
 __attribute__((aligned(0x10))) 
 IDTEntry idt[256];
@@ -89,7 +90,7 @@ void InitializeIDT() {
 
     for (int i = 48; i < 256; ++i)
     {
-        IdtSetHandler(i, TRAP_GATE, default_interrupt_handler);
+        IdtSetHandler(i, INTERRUPT_GATE, default_interrupt_handler);
     }
 
     idtr.limit = sizeof(idt) - 1;
@@ -105,43 +106,55 @@ extern "C" void ExceptionDump(Registers r)
     if (r.intNum < 20)
     {
         desc = s_exceptionDesc[r.intNum];
+
+        GlobalRenderer->color = 0xff00ffff;
+        GlobalRenderer->NextLine();
+        GlobalRenderer->Print("Exception: ");
+        GlobalRenderer->Print(desc);
+        GlobalRenderer->NextLine();
+        GlobalRenderer->Print("  rax=");
+        GlobalRenderer->Print(to_string((int64_t)r.rax));
+        GlobalRenderer->NextLine();
+        GlobalRenderer->Print("  rbx=");
+        GlobalRenderer->Print(to_string((int64_t)r.rbx));
+        GlobalRenderer->NextLine();
+        GlobalRenderer->Print("  rcx=");
+        GlobalRenderer->Print(to_string((int64_t)r.rcx));
+        GlobalRenderer->NextLine();
+        GlobalRenderer->Print("  rdx=");
+        GlobalRenderer->Print(to_string((int64_t)r.rdx));
+        GlobalRenderer->NextLine();
+        GlobalRenderer->Print("  rsi=");
+        GlobalRenderer->Print(to_string((int64_t)r.rsi));
+        GlobalRenderer->NextLine();
+        GlobalRenderer->Print("  rdi=");
+        GlobalRenderer->Print(to_string((int64_t)r.rdi));
+        GlobalRenderer->NextLine();
+        GlobalRenderer->Print("  rip=");
+        GlobalRenderer->Print(to_string((int64_t)r.rip));
+        GlobalRenderer->NextLine();
+        GlobalRenderer->Print("  rsp=");
+        GlobalRenderer->Print(to_string((int64_t)r.rsp));
+        GlobalRenderer->NextLine();
+        GlobalRenderer->Print("  cs=");
+        GlobalRenderer->Print(to_string((int64_t)r.cs));
+        GlobalRenderer->NextLine();
+        GlobalRenderer->Print("  ss=");
+        GlobalRenderer->Print(to_string((int64_t)r.ss));
+        GlobalRenderer->NextLine();
+
+		outb(0xA1, 0x20);
+        outb(0x20, 0x20);
+
+        asm("hlt");
+    }
+    else 
+    {
+        GlobalRenderer->Print(to_string((int64_t)r.intNum));
+
+        outb(0xA1, 0x20);
+        outb(0x20, 0x20);
     }
 
-    GlobalRenderer->color = 0xff00ffff;
-    GlobalRenderer->NextLine();
-    GlobalRenderer->Print("Exception: ");
-    GlobalRenderer->Print(desc);
-    GlobalRenderer->NextLine();
-    GlobalRenderer->Print("  rax=");
-    GlobalRenderer->Print(to_string((int64_t)r.rax));
-    GlobalRenderer->NextLine();
-    GlobalRenderer->Print("  rbx=");
-    GlobalRenderer->Print(to_string((int64_t)r.rbx));
-    GlobalRenderer->NextLine();
-    GlobalRenderer->Print("  rcx=");
-    GlobalRenderer->Print(to_string((int64_t)r.rcx));
-    GlobalRenderer->NextLine();
-    GlobalRenderer->Print("  rdx=");
-    GlobalRenderer->Print(to_string((int64_t)r.rdx));
-    GlobalRenderer->NextLine();
-    GlobalRenderer->Print("  rsi=");
-    GlobalRenderer->Print(to_string((int64_t)r.rsi));
-    GlobalRenderer->NextLine();
-    GlobalRenderer->Print("  rdi=");
-    GlobalRenderer->Print(to_string((int64_t)r.rdi));
-    GlobalRenderer->NextLine();
-    GlobalRenderer->Print("  rip=");
-    GlobalRenderer->Print(to_string((int64_t)r.rip));
-    GlobalRenderer->NextLine();
-    GlobalRenderer->Print("  rsp=");
-    GlobalRenderer->Print(to_string((int64_t)r.rsp));
-    GlobalRenderer->NextLine();
-    GlobalRenderer->Print("  cs=");
-    GlobalRenderer->Print(to_string((int64_t)r.cs));
-    GlobalRenderer->NextLine();
-    GlobalRenderer->Print("  ss=");
-    GlobalRenderer->Print(to_string((int64_t)r.ss));
-    GlobalRenderer->NextLine();
-
-    asm("hlt");
+    
 }

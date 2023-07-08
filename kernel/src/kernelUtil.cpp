@@ -51,6 +51,7 @@ void PrepareMemory(BootInfo* bootInfo)
 void PrepareInterrupts()
 {   
     InitializeIDT();
+    asm volatile("sti");
 }
 
 
@@ -72,7 +73,7 @@ KernelInfo InitializeKernel(BootInfo* bootInfo)
     PrepareInterrupts();
 
 
-    asm volatile("mov %ax, 0x21");
+    // asm volatile("mov %ax, 0x21");
     // asm volatile("ltr %ax");
     
 

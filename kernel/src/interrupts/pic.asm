@@ -17,7 +17,7 @@ RemapPIC:
     out 0x21, al
     out 0xA1, al     ;done!
 
-    mov al, 0x0
+    mov al, 0x00
     out 0x21, al
     out 0xA1, al
 

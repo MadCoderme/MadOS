@@ -100,6 +100,24 @@ void InitializeIDT() {
 }
 
 
+const char ASCIITable[] = {
+         0 ,  0 , '1', '2',
+        '3', '4', '5', '6',
+        '7', '8', '9', '0',
+        '-', '=',  0 ,  0 ,
+        'q', 'w', 'e', 'r',
+        't', 'y', 'u', 'i',
+        'o', 'p', '[', ']',
+         0 ,  0 , 'a', 's',
+        'd', 'f', 'g', 'h',
+        'j', 'k', 'l', ';',
+        '\'','`',  0 , '\\',
+        'z', 'x', 'c', 'v',
+        'b', 'n', 'm', ',',
+        '.', '/',  0 , '*',
+         0 , ' '
+};
+
 extern "C" void ExceptionDump(int r)
 {
     const char *desc = "Unknown";
@@ -149,7 +167,11 @@ extern "C" void ExceptionDump(int r)
     {
         
         if (r == 33)
-            GlobalRenderer->Print(to_string((int64_t)r));
+        {
+            uint8_t scancode = inb(0x60);
+            GlobalRenderer->PutChar(ASCIITable[scancode]);
+        }
+
         outb(0xA1, 0x20);
         outb(0x21, 0x20);
     }

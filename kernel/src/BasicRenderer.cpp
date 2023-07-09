@@ -30,32 +30,33 @@ void BasicRenderer::NextLine()
     CursorPosition.y += 18;
 }
 
-void BasicRenderer::PutChar(char ch, unsigned int xOff, unsigned int yOff) {
+void BasicRenderer::PutChar(char ch) {
     unsigned int* pxlPtr = (unsigned int*)TargetFrameBuffer->BaseAddress;
     char* fontPtr = (char*)Font->glyphBuffer + (ch * Font->fontHeader->characterSize);
 
-    for( unsigned int y = yOff; y < yOff + 16; y++) {
-        for (unsigned int x = xOff; x < xOff + 8; x++) {
-            if ((*fontPtr & (0b10000000 >> (x - xOff))) > 0) {
+    for( unsigned int y = CursorPosition.y; y < CursorPosition.y + 16; y++) {
+        for (unsigned int x = CursorPosition.x; x < CursorPosition.x + 8; x++) {
+            if ((*fontPtr & (0b10000000 >> (x - CursorPosition.x))) > 0) {
                 *(unsigned int*)(pxlPtr + x + (y * TargetFrameBuffer->PixelsPerScanline)) = color;
             }
         }
-
         fontPtr++;
-    }  
+    } 
+
+    CursorPosition.x += 8;
+
+    if(CursorPosition.x + 8 > TargetFrameBuffer->Width) {
+        CursorPosition.x = 0;
+        CursorPosition.y += 16;
+    } 
+        
 }
 
 void BasicRenderer::Print(const char* str) {
     char* chr = (char*)str;
     while(*chr != 0) {
-        PutChar(*chr, CursorPosition.x, CursorPosition.y);
-        CursorPosition.x += 8;
+        PutChar(*chr);
 
-        if(CursorPosition.x + 8 > TargetFrameBuffer->Width) {
-            CursorPosition.x = 0;
-            CursorPosition.y += 16;
-        }
-        
         chr++;
     }
 }

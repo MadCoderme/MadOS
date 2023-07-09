@@ -14,10 +14,6 @@ default_interrupt_handler:
 exception%1_handler:
         mov rdi, %1
         call ExceptionDump
-
-        mov al, 0x20
-        out 0x21, al
-        out 0xA1, al
          
         iretq
 %endmacro

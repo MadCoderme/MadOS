@@ -150,6 +150,8 @@ extern "C" void ExceptionDump(int r)
         
         if (r == 33)
             GlobalRenderer->Print(to_string((int64_t)r));
+        outb(0xA1, 0x20);
+        outb(0x21, 0x20);
     }
 
     

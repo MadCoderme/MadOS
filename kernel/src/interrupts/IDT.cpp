@@ -100,57 +100,56 @@ void InitializeIDT() {
 }
 
 
-extern "C" void ExceptionDump(Registers r)
+extern "C" void ExceptionDump(int r)
 {
     const char *desc = "Unknown";
-    if (r.intNum < 20)
+    if (r < 20)
     {
-        desc = s_exceptionDesc[r.intNum];
+        desc = s_exceptionDesc[r];
 
         GlobalRenderer->color = 0xff00ffff;
         GlobalRenderer->NextLine();
         GlobalRenderer->Print("Exception: ");
         GlobalRenderer->Print(desc);
         GlobalRenderer->NextLine();
-        GlobalRenderer->Print("  rax=");
-        GlobalRenderer->Print(to_string((int64_t)r.rax));
-        GlobalRenderer->NextLine();
-        GlobalRenderer->Print("  rbx=");
-        GlobalRenderer->Print(to_string((int64_t)r.rbx));
-        GlobalRenderer->NextLine();
-        GlobalRenderer->Print("  rcx=");
-        GlobalRenderer->Print(to_string((int64_t)r.rcx));
-        GlobalRenderer->NextLine();
-        GlobalRenderer->Print("  rdx=");
-        GlobalRenderer->Print(to_string((int64_t)r.rdx));
-        GlobalRenderer->NextLine();
-        GlobalRenderer->Print("  rsi=");
-        GlobalRenderer->Print(to_string((int64_t)r.rsi));
-        GlobalRenderer->NextLine();
-        GlobalRenderer->Print("  rdi=");
-        GlobalRenderer->Print(to_string((int64_t)r.rdi));
-        GlobalRenderer->NextLine();
-        GlobalRenderer->Print("  rip=");
-        GlobalRenderer->Print(to_string((int64_t)r.rip));
-        GlobalRenderer->NextLine();
-        GlobalRenderer->Print("  rsp=");
-        GlobalRenderer->Print(to_string((int64_t)r.rsp));
-        GlobalRenderer->NextLine();
-        GlobalRenderer->Print("  cs=");
-        GlobalRenderer->Print(to_string((int64_t)r.cs));
-        GlobalRenderer->NextLine();
-        GlobalRenderer->Print("  ss=");
-        GlobalRenderer->Print(to_string((int64_t)r.ss));
-        GlobalRenderer->NextLine();
+        // GlobalRenderer->Print("  rax=");
+        // GlobalRenderer->Print(to_string((int64_t)r.rax));
+        // GlobalRenderer->NextLine();
+        // GlobalRenderer->Print("  rbx=");
+        // GlobalRenderer->Print(to_string((int64_t)r.rbx));
+        // GlobalRenderer->NextLine();
+        // GlobalRenderer->Print("  rcx=");
+        // GlobalRenderer->Print(to_string((int64_t)r.rcx));
+        // GlobalRenderer->NextLine();
+        // GlobalRenderer->Print("  rdx=");
+        // GlobalRenderer->Print(to_string((int64_t)r.rdx));
+        // GlobalRenderer->NextLine();
+        // GlobalRenderer->Print("  rsi=");
+        // GlobalRenderer->Print(to_string((int64_t)r.rsi));
+        // GlobalRenderer->NextLine();
+        // GlobalRenderer->Print("  rdi=");
+        // GlobalRenderer->Print(to_string((int64_t)r.rdi));
+        // GlobalRenderer->NextLine();
+        // GlobalRenderer->Print("  rip=");
+        // GlobalRenderer->Print(to_string((int64_t)r.rip));
+        // GlobalRenderer->NextLine();
+        // GlobalRenderer->Print("  rsp=");
+        // GlobalRenderer->Print(to_string((int64_t)r.rsp));
+        // GlobalRenderer->NextLine();
+        // GlobalRenderer->Print("  cs=");
+        // GlobalRenderer->Print(to_string((int64_t)r.cs));
+        // GlobalRenderer->NextLine();
+        // GlobalRenderer->Print("  ss=");
+        // GlobalRenderer->Print(to_string((int64_t)r.ss));
+        // GlobalRenderer->NextLine();
 
         asm("hlt");
     }
     else 
     {
-        GlobalRenderer->Print(to_string((int64_t)r.intNum));
-
-        outb(0xA1, 0x20);
-        outb(0x20, 0x20);
+        
+        if (r == 33)
+            GlobalRenderer->Print(to_string((int64_t)r));
     }
 
     

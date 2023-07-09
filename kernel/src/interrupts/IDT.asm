@@ -12,10 +12,14 @@ default_interrupt_handler:
 
 %macro make_exception_handler 1
 exception%1_handler:
-        cli
-        push byte 0
-        push byte %1
-        jmp exception_body
+        mov rdi, %1
+        call ExceptionDump
+
+        mov al, 0x20
+        out 0x21, al
+        out 0xA1, al
+         
+        iretq
 %endmacro
 
 %macro make_error_exception_handler 1
@@ -102,13 +106,6 @@ exception_handlers:
         dq exception47_handler
 
 exception_body:
-        push rax
-        push rcx
-        push rdx
-        push rbx
-        push rbp
-        push rsi
-        push rdi
 
         call ExceptionDump
 

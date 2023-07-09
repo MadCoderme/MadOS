@@ -24,12 +24,12 @@ struct IDTR {
 
 typedef struct Registers
 {
-    uint64_t rdi, rsi, rbp, rbx, rdx, rcx, rax;
+    // uint64_t rdi, rsi, rbp, rbx, rdx, rcx, rax;
     uint64_t intNum, errCode;
     uint64_t rip, cs, eflags, rsp, ss;
 } Registers;
 
-extern "C" void ExceptionDump(Registers r);
+extern "C" void ExceptionDump(int r);
 extern "C" void default_exception_handler();
 extern "C" void default_interrupt_handler();
 extern "C" void (*exception_handlers[20])();

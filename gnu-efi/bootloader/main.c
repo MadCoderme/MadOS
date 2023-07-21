@@ -33,6 +33,7 @@ typedef struct {
 	PSF1_FONT* font;
 	EFI_MEMORY_DESCRIPTOR* memoryMap;
 	UINTN mapSize, descriptorSize;
+	void* rsdp;
 } BootInfo;
 
 
@@ -153,6 +154,16 @@ int memcmp(const void* aptr, const void* bptr, size_t n) {
 	return 0;
 }
 
+UINTN strcmp(CHAR8* a, CHAR8* b, UINTN length){
+	
+	for (UINTN i = 0; i < length; i++)
+	{
+		if (*a != *b) return 0;
+	}
+
+	return 1;
+}
+
 EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	
 	InitializeLib(ImageHandle, SystemTable);
@@ -256,12 +267,29 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 		}
 	}
 
+	EFI_CONFIGURATION_TABLE* configTable = SystemTable->ConfigurationTable;
+	EFI_GUID acpiGuid = ACPI_20_TABLE_GUID;
+	void* rsdp = NULL;
+
+	for (UINTN i = 0; i < SystemTable->NumberOfTableEntries; i++)
+	{
+		if (CompareGuid(&configTable[i].VendorGuid, &acpiGuid))
+		{
+			if (strcmp((CHAR8*)"RSD PTR ", (CHAR8*)configTable->VendorTable, 8))
+			{
+				rsdp = (void*)configTable->VendorTable;
+			}
+		}
+		configTable++;
+	}
+
 	BootInfo bootInfo;
 	bootInfo.frameBuffer = newBuffer;
 	bootInfo.font = font;
 	bootInfo.memoryMap = EfiMemoryMap;
 	bootInfo.mapSize = MapSize;
 	bootInfo.descriptorSize = DescriptorSize;
+	bootInfo.rsdp = rsdp;
 
 	SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
 

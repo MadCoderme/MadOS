@@ -3,6 +3,7 @@
 #include "GDT/GDT.h"
 #include "interrupts/IDT.h"
 #include "interrupts/pic.h"
+#include "system/pci/pci.h"
 
 KernelInfo kernelInfo;
 PageTableManager ptm = NULL;
@@ -48,10 +49,16 @@ void PrepareMemory(BootInfo* bootInfo)
 }
 
 
-void PrepareInterrupts()
+void SetupInterrupts()
 {   
     InitializeIDT();
     asm volatile("sti");
+}
+
+void SetupACPI(ACPI::RSDPDescriptor* rsdp)
+{
+    ACPI::ACPIMCFGHeader* mcfg = (ACPI::ACPIMCFGHeader*)ACPI::FindTable(rsdp, (char*)"MCFG");
+    PCIExpress::EnumeratePIC();
 }
 
 
@@ -70,7 +77,8 @@ KernelInfo InitializeKernel(BootInfo* bootInfo)
     gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
     setGDT(&gdtDescriptor);
 
-    PrepareInterrupts();
+    SetupInterrupts();
+    SetupACPI(bootInfo->rsdp);
 
 
     // asm volatile("mov %ax, 0x21");

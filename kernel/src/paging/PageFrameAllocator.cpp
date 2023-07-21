@@ -32,14 +32,17 @@ void PageFrameAllocator::ReadEfiMemoryMap(EFI_MEMORY_DESCRIPTOR* Map, size_t Map
     uint64_t bitmapSize = memorySize / 4096 / 8 + 1;
     InitializeBitmap(bitmapSize, largestFreeMemSeg);
 
-    AllocatePages(&PageBitmap, PageBitmap.size / 4096 + 1);
-
+    ReservePages(0, memorySize / 4096 + 1);
     for (int i = 0; i < entries; i++) {
         EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint64_t)Map + (i * DescriptorSize));
-        if(desc->type != 7) {
-            ReservePages(desc->physAddr, desc->numPages);
+        if(desc->type == 7) {
+            UnreservePages(desc->physAddr, desc->numPages);
         }
     }
+
+    AllocatePages(0, 0x100);
+    AllocatePages(PageBitmap.Buffer, PageBitmap.size / 4096 + 1);
+
 }
 
 void PageFrameAllocator::InitializeBitmap(size_t bitmapSize, void* bufferAddress) {

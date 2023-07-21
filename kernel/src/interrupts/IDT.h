@@ -1,8 +1,5 @@
 #pragma once
 #include <stdint.h>
-#include "../BasicRenderer.h"
-#include "../cstr.h"
-#include "../panic.h"
 
 #define INTERRUPT_GATE              0x8e
 #define TRAP_GATE                   0x8f
@@ -22,17 +19,5 @@ struct IDTR {
 	uint64_t	base;
 } __attribute__((packed));
 
-typedef struct Registers
-{
-    // uint64_t rdi, rsi, rbp, rbx, rdx, rcx, rax;
-    uint64_t intNum, errCode;
-    uint64_t rip, cs, eflags, rsp, ss;
-} Registers;
-
-extern "C" void ExceptionDump(int r);
-extern "C" void default_exception_handler();
-extern "C" void default_interrupt_handler();
-extern "C" void (*exception_handlers[20])();
-
-void SetDescriptor(int n, uint64_t handler);
 void InitializeIDT();
+void IdtSetEntry(int n, uint64_t handler);

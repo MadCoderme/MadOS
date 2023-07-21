@@ -7,12 +7,14 @@
 #include "paging/PageFrameAllocator.h"
 #include "paging/PageMapIndexer.h"
 #include "paging/PageTableManager.h"
+#include "system/acpi/acpi.h"
 
 struct BootInfo {
 	FrameBuffer* frameBuffer;
 	PSF1_FONT* font;
 	EFI_MEMORY_DESCRIPTOR* memoryMap;
 	uint64_t mapSize, descriptorSize;
+	ACPI::RSDPDescriptor* rsdp;
 };
 
 struct KernelInfo {

@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
-#include "../memory.h"
+#include "../mem/mem.h"
 #include "../paging/PageFrameAllocator.h"
 
 struct GDTDescriptor {

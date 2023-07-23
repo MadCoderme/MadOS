@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "../efiMemory.h"
-#include "../memory.h"
+#include "../mem/mem.h"
 #include "../Bitmap.h"
 
 

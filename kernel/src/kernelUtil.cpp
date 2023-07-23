@@ -1,13 +1,12 @@
 #include "kernelUtil.h"
-#include "memory.h"
 #include "GDT/GDT.h"
 #include "interrupts/IDT.h"
 #include "interrupts/pic.h"
 #include "system/pci/pci.h"
 
+
 KernelInfo kernelInfo;
 PageTableManager ptm = NULL;
-
 
 void PrepareMemory(BootInfo* bootInfo) 
 {
@@ -40,9 +39,7 @@ void PrepareMemory(BootInfo* bootInfo)
         ptm.MapMemory((void*)i, (void*)i);
     }
     
-    // asm volatile ("mov %%cr4, %%eax; bts $5, %%eax; mov %%eax, %%cr4" ::: "eax");	 
-    asm volatile ("mov %0, %%cr3" :: "r" (PML4));
-    // asm volatile ("mov %%cr0, %%eax; or $0x80000000, %%eax; mov %%eax, %%cr0;" ::: "eax");
+    enablePaging(PML4);
 
 
     kernelInfo.PTM = &ptm;
@@ -79,13 +76,14 @@ KernelInfo InitializeKernel(BootInfo* bootInfo)
 
     SetupInterrupts();
     SetupACPI(bootInfo->rsdp);
-
+    
+    InitializeHeap();
 
     // asm volatile("mov %ax, 0x21");
     // asm volatile("ltr %ax");
     
 
-    // memset(bootInfo->frameBuffer->BaseAddress, 0, bootInfo->frameBuffer->BufferSize);
+    // memsett(bootInfo->frameBuffer->BaseAddress, 0, bootInfo->frameBuffer->BufferSize);
 
     return kernelInfo;
 }

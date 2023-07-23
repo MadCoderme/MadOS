@@ -27,3 +27,5 @@ struct PageTable {
     PageDirectoryEntry entries [512];
 }__attribute__((aligned(0x1000)));
 
+extern "C" void enablePaging(PageTable* PML4);
+

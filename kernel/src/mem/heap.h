@@ -8,7 +8,7 @@
 
 struct HeapBlock
 {
-    uint64_t size;
+    uint32_t size;
     bool free;
     struct HeapBlock* prev;
     struct HeapBlock* next;

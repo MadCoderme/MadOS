@@ -56,6 +56,17 @@ namespace PCIExpress
         uint8_t classCode;
         uint8_t subclass;
         uint8_t progIntf;
+        uint8_t revision;
+        uint8_t bist;
+        uint8_t headerType;
+        uint8_t latencyTimer;
+        uint8_t cacheLineSize;
+        uint32_t BAR0;
+        uint32_t BAR1;
+        uint32_t BAR2;
+        uint32_t BAR3;
+        uint32_t BAR4;
+        uint32_t BAR5;
     };
 
     void EnumeratePIC();

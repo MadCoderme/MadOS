@@ -9,5 +9,8 @@ extern "C" void _start(BootInfo* bootInfo) {
     GlobalRenderer->NextLine();
     
     // asm("int $0x21");
-    while (true);
+    while (true)
+    {
+        asm ("hlt");
+    }
 }

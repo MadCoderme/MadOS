@@ -313,6 +313,11 @@ extern "C" void isr_handler(registers_t *r) {
     }
     else 
     {
+        if (r->isrNumber == 32)
+        {
+            HandleTimer();
+        }
+        
         if (r->isrNumber == 33)
         {
             HandleKeyboard();

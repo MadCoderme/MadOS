@@ -45,6 +45,14 @@ void PrepareMemory(BootInfo* bootInfo)
     kernelInfo.PTM = &ptm;
 }
 
+void SetupGDT()
+{
+    GDTDescriptor gdtDescriptor;
+    // InitializeTSS();
+    gdtDescriptor.Size = sizeof(GDT) - 1;
+    gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
+    setGDT(&gdtDescriptor);
+}
 
 void SetupInterrupts()
 {   
@@ -67,23 +75,16 @@ KernelInfo InitializeKernel(BootInfo* bootInfo)
     GlobalRenderer = &renderer;
 
     PrepareMemory(bootInfo);
-
-    GDTDescriptor gdtDescriptor;
-    // InitializeTSS();
-    gdtDescriptor.Size = sizeof(GDT) - 1;
-    gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
-    setGDT(&gdtDescriptor);
-
+    SetupGDT();
     SetupInterrupts();
     SetupACPI(bootInfo->rsdp);
-    
     InitializeHeap();
 
     // asm volatile("mov %ax, 0x21");
     // asm volatile("ltr %ax");
     
 
-    // memsett(bootInfo->frameBuffer->BaseAddress, 0, bootInfo->frameBuffer->BufferSize);
+    // memset(bootInfo->frameBuffer->BaseAddress, 0, bootInfo->frameBuffer->BufferSize);
 
     return kernelInfo;
 }

@@ -95,17 +95,17 @@ void Expand(HeapBlock* prev)
 
 void mergeBlock(HeapBlock* block)
 {
-    if (block->prev && block->prev->free)
-    {
-        block->prev->size += block->size;
-        block->prev->next = block->next;
-        blockCount--;
-    }
-
     if (block->next && block->next->free)
     {
         block->size += block->next->size;
         block->next = block->next->next;
+        blockCount--;
+    }
+
+    if (block->prev && block->prev->free)
+    {
+        block->prev->size += block->size;
+        block->prev->next = block->next;
         blockCount--;
     }
 

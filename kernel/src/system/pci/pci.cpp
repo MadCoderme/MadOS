@@ -1,4 +1,5 @@
 #include "pci.h"
+#include "../../ahci/ahci.h"
 
 uint8_t PciRead8(unsigned int id, unsigned int reg)
 {
@@ -48,7 +49,7 @@ namespace PCIExpress
     static void PciVisit(uint16_t bus, uint16_t dev, uint8_t func)
     {
         uint32_t id = PCI_MAKE_ID(bus, dev, func);
-
+        
         PCIDeviceInfo info;
         info.vendorId = PciRead16(id, PCI_CONFIG_VENDOR_ID);
         if (info.vendorId == 0xffff)
@@ -61,6 +62,8 @@ namespace PCIExpress
         info.subclass = PciRead8(id, PCI_CONFIG_SUBCLASS);
         info.classCode = PciRead8(id, PCI_CONFIG_CLASS_CODE);
 
+        info.BAR5 = PciRead32(id, PCI_CONFIG_BAR5);
+
 
         GlobalRenderer->Print(getVendorName(info.vendorId));
         GlobalRenderer->Print(" | ");
@@ -68,8 +71,14 @@ namespace PCIExpress
         GlobalRenderer->Print(" | ");
         GlobalRenderer->Print(getDeviceName(info.vendorId, info.deviceId));
         GlobalRenderer->Print(" | ");
-        GlobalRenderer->Print(getInterface(info.classCode, info.subclass, info.progIntf));
+        // GlobalRenderer->Print(to_hstring(info.headerType));
         GlobalRenderer->NextLine();
+
+        if (info.classCode == 0x01 && info.subclass == 0x6 && info.progIntf == 0x1) // AHCI Interface
+        {
+            GlobalRenderer->Print(to_hstring(info.BAR5));
+            // ProbePort((HBAMem*)info.BAR5);            
+        }
 
         // const PciDriver *driver = g_pciDriverTable;
         // while (driver->init)
@@ -89,7 +98,6 @@ namespace PCIExpress
                 uint32_t baseId = PCI_MAKE_ID(bus, dev, 0);
                 uint8_t headerType = PciRead8(baseId, PCI_CONFIG_HEADER_TYPE);
                 uint8_t funcCount = headerType & PCI_TYPE_MULTIFUNC ? 8 : 1;
-
                 for (uint8_t func = 0; func < funcCount; ++func)
                 {
                     PciVisit(bus, dev, func);

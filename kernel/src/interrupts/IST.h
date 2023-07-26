@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "../IO.h"
 #include "pic.h"
+#include "../timer/pit.h"
 
 struct registers_t {
   uint64_t r15;

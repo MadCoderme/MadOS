@@ -89,6 +89,24 @@ const char* to_hstring(uint64_t value) {
     return hexToString;
 }
 
+char hexToString32[128];
+const char* to_hstring(uint32_t value) {
+    uint32_t* valuePtr = &value;
+    uint8_t* ptr;
+    uint8_t tmp;
+    uint8_t size = 3;
+    for (uint8_t i = 0; i < size; i++) {
+        ptr = ((uint8_t*)valuePtr + i);
+        tmp = ((*ptr & 0xF0) >> 4);
+        hexToString32[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
+        tmp = ((*ptr & 0x0F));
+        hexToString32[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
+    }
+
+    hexToString[size + 1] = 0;
+    return hexToString32;
+}
+
 char hexToString16[128];
 const char* to_hstring(uint16_t value) {
     uint16_t* valuePtr = &value;

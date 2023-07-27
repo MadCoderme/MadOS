@@ -43,14 +43,13 @@ void PciWrite32(unsigned int id, unsigned int reg, uint32_t data)
     outl(PCI_CONFIG_DATA, data);
 }
 
-
 namespace PCIExpress 
 {   
-    static void PciVisit(uint16_t bus, uint16_t dev, uint8_t func)
+    void PciVisit(uint16_t bus, uint16_t dev, uint8_t func)
     {
         uint32_t id = PCI_MAKE_ID(bus, dev, func);
         
-        PCIDeviceInfo info;
+        PCI_T info;
         info.vendorId = PciRead16(id, PCI_CONFIG_VENDOR_ID);
         if (info.vendorId == 0xffff)
         {
@@ -76,7 +75,8 @@ namespace PCIExpress
 
         if (info.classCode == 0x01 && info.subclass == 0x6 && info.progIntf == 0x1) // AHCI Interface
         {
-            GlobalRenderer->Print(to_hstring(info.BAR5));
+            HBAMem* h = (HBAMem*)info.BAR5;
+            GlobalRenderer->Print(to_hstring(h->bohc));
             // ProbePort((HBAMem*)info.BAR5);            
         }
 

@@ -82,7 +82,7 @@ namespace PCIExpress
         uint8_t maxLatency;
     } __attribute__((packed));
 
-    void EnumeratePIC();
+    void EnumeratePIC(ACPI::ACPIMCFGHeader* mcfg);
 }
 
 const char* getVendorName(uint16_t vendorId);

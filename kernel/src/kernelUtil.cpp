@@ -6,7 +6,6 @@
 
 
 KernelInfo kernelInfo;
-PageTableManager ptm = NULL;
 
 void PrepareMemory(BootInfo* bootInfo) 
 {
@@ -23,11 +22,11 @@ void PrepareMemory(BootInfo* bootInfo)
     PageTable* PML4 = (PageTable*)GlobalAllocator.RequestPage();
     memset(PML4, 0, 0x1000);
 
-    ptm = PageTableManager(PML4);
+    GlobalPTM.PML4 = PML4;
 
     for (uint64_t i = 0; i < memSize; i+=0x1000)
     {
-        ptm.MapMemory((void*)i, (void*)i);
+        GlobalPTM.MapMemory((void*)i, (void*)i);
     }
     
     uint64_t frameBufferBase = (uint64_t)bootInfo->frameBuffer->BaseAddress;
@@ -36,13 +35,13 @@ void PrepareMemory(BootInfo* bootInfo)
 
     for (uint64_t i = frameBufferBase; i < frameBufferBase + frameBufferSize; i+=4096)
     {
-        ptm.MapMemory((void*)i, (void*)i);
+        GlobalPTM.MapMemory((void*)i, (void*)i);
     }
     
     enablePaging(PML4);
 
 
-    kernelInfo.PTM = &ptm;
+    kernelInfo.PTM = &GlobalPTM;
 }
 
 void SetupGDT()
@@ -63,7 +62,7 @@ void SetupInterrupts()
 void SetupACPI(ACPI::RSDPDescriptor* rsdp)
 {
     ACPI::ACPIMCFGHeader* mcfg = (ACPI::ACPIMCFGHeader*)ACPI::FindTable(rsdp, (char*)"MCFG");
-    PCIExpress::EnumeratePIC();
+    PCIExpress::EnumeratePIC(mcfg);
 }
 
 

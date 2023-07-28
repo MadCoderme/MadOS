@@ -75,9 +75,8 @@ namespace PCIExpress
 
         if (info.classCode == 0x01 && info.subclass == 0x6 && info.progIntf == 0x1) // AHCI Interface
         {
-            HBAMem* h = (HBAMem*)info.BAR5;
-            GlobalRenderer->Print(to_hstring(h->bohc));
-            // ProbePort((HBAMem*)info.BAR5);            
+            HBAMem* abar = (HBAMem*)info.BAR5;
+            ProbePort(abar);            
         }
 
         // const PciDriver *driver = g_pciDriverTable;
@@ -88,7 +87,7 @@ namespace PCIExpress
         // }
     }
 
-    void EnumeratePIC()
+    void EnumeratePIC(ACPI::ACPIMCFGHeader* mcfg)
     {
         GlobalRenderer->NextLine();
         for (uint16_t bus = 0; bus < 256; ++bus)
@@ -104,5 +103,6 @@ namespace PCIExpress
                 }
             }
         }
+
     }
 }

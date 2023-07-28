@@ -61,6 +61,11 @@ void BasicRenderer::Print(const char* str) {
     }
 }
 
+void BasicRenderer::PrintNL(const char* str) {
+    Print(str);
+    NextLine();
+}
+
 void BasicRenderer::PutPixel(unsigned int x, unsigned int y) {
     *(unsigned int*)((unsigned int*)TargetFrameBuffer->BaseAddress + x + (y * TargetFrameBuffer->PixelsPerScanline)) = color;
 }

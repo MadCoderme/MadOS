@@ -13,6 +13,7 @@ class BasicRenderer {
     unsigned int color;
     void PutChar(char ch);
     void Print(const char* str);
+    void PrintNL(const char* str);
     void PutPixel(unsigned int x, unsigned int y);
     void Clear(uint32_t color);
     void NextLine();

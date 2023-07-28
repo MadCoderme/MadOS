@@ -1,10 +1,10 @@
 #include "PageTableManager.h"
 
-PageTableManager::PageTableManager(PageTable* PML4Address) {
-    this->PML4 = PML4Address;
-}
+PageTableManager GlobalPTM;
 
-
+// PageTableManager::PageTableManager(PageTable* PML4Address) {
+//     this->PML4 = PML4Address;
+// }
 
 void PageTableManager::MapMemory(void* virtualMemory, void* physicalMemory) {
     PageMapIndexer indexer = PageMapIndexer((uint64_t)virtualMemory);

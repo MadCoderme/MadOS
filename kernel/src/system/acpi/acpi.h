@@ -27,9 +27,19 @@ namespace ACPI {
         uint32_t CreatorRevision;
     }__attribute__ ((packed));
 
+    struct acpi_pci_config_t
+    {
+        uint64_t base;
+        uint16_t pciSegment;
+        uint8_t startBus;
+        uint8_t endBus;
+        uint32_t reserved;
+    }__attribute__ ((packed));
+
     struct ACPIMCFGHeader {
         ACPISDTHeader Header;
         uint64_t Reserved;
+        acpi_pci_config_t buses[];
     }__attribute__ ((packed));
 
     void* FindTable(RSDPDescriptor* rsdp, char* signature);

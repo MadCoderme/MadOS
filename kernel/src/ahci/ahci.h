@@ -31,7 +31,7 @@
 #define ATA_CMD_READ_DMA_EX 	0x25
 #define ATA_CMD_WRITE_DMA_EX    0x35
 
-struct HBAPort
+typedef volatile struct tagHBAPort
 {
 	uint32_t clb;		// 0x00, command list base address, 1K-byte aligned
 	uint32_t clbu;		// 0x04, command list base address upper 32 bits
@@ -52,7 +52,7 @@ struct HBAPort
 	uint32_t fbs;		// 0x40, FIS-based switch control
 	uint32_t rsv1[11];	// 0x44 ~ 0x6F, Reserved
 	uint32_t vendor[4];	// 0x70 ~ 0x7F, vendor specific
-};
+} HBAPort;
 
 struct HBAMem
 {

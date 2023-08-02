@@ -64,14 +64,14 @@ namespace PCIExpress
         info.BAR5 = PciRead32(id, PCI_CONFIG_BAR5);
 
 
-        GlobalRenderer->Print(getVendorName(info.vendorId));
-        GlobalRenderer->Print(" | ");
-        GlobalRenderer->Print(getFunction(info.classCode, info.subclass));
-        GlobalRenderer->Print(" | ");
-        GlobalRenderer->Print(getDeviceName(info.vendorId, info.deviceId));
-        GlobalRenderer->Print(" | ");
-        // GlobalRenderer->Print(to_hstring(info.headerType));
-        GlobalRenderer->NextLine();
+        // GlobalRenderer->Print(getVendorName(info.vendorId));
+        // GlobalRenderer->Print(" | ");
+        // GlobalRenderer->Print(getFunction(info.classCode, info.subclass));
+        // GlobalRenderer->Print(" | ");
+        // GlobalRenderer->Print(getDeviceName(info.vendorId, info.deviceId));
+        // GlobalRenderer->Print(" | ");
+        // // GlobalRenderer->Print(to_hstring(info.headerType));
+        // GlobalRenderer->NextLine();
 
         if (info.classCode == 0x01 && info.subclass == 0x6 && info.progIntf == 0x1) // AHCI Interface
         {

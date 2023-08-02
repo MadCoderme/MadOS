@@ -68,33 +68,27 @@ void PortRebase(HBAPort *port, int portno)
 {
 	stopCmd(port);	// Stop command engine
  
+        void* newBase = GlobalAllocator.RequestPage();
+        port->clb = (uint32_t)(uint64_t)newBase;
+        port->clbu = (uint32_t)((uint64_t)newBase >> 32);
+        memset((void*)(uint64_t)(port->clb), 0, 1024);
 
-	// Command list offset: 1K*portno
-	// Command list entry size = 32
-	// Command list entry maxim count = 32
-	// Command list maxim size = 32*32 = 1K per port
-	port->clb = AHCI_BASE + (portno<<10);
-	port->clbu = 0;
-	memset((void*)(port->clb), 0, 1024);
- 
-	// FIS offset: 32K+256*portno
-	// FIS entry size = 256 bytes per port
-	port->fb = AHCI_BASE + (32<<10) + (portno<<8);
-	port->fbu = 0;
-	memset((void*)(port->fb), 0, 256);
- 
-	// Command table offset: 40K + 8K*portno
-	// Command table size = 256*32 = 8K per port
-	HBA_CMD_HEADER *cmdheader = (HBA_CMD_HEADER*)(port->clb);
-	for (int i=0; i<32; i++)
-	{
-		cmdheader[i].prdtl = 8;	// 8 prdt entries per command table
-					// 256 bytes per command table, 64+16+48+16*8
-		// Command table offset: 40K + 8K*portno + cmdheader_index*256
-		cmdheader[i].ctba = AHCI_BASE + (40<<10) + (portno<<13) + (i<<8);
-		cmdheader[i].ctbau = 0;
-		memset((void*)cmdheader[i].ctba, 0, 256);
-	}
+        void* fisBase = GlobalAllocator.RequestPage();
+        port->fb = (uint32_t)(uint64_t)fisBase;
+        port->fbu = (uint32_t)((uint64_t)fisBase >> 32);
+        memset(fisBase, 0, 256);
+
+        HBA_CMD_HEADER* cmdHeader = (HBA_CMD_HEADER*)((uint64_t)port->clb + ((uint64_t)port->clbu << 32));
+
+        for (int i = 0; i < 32; i++){
+            cmdHeader[i].prdtl = 8;
+
+            void* cmdTableAddress = GlobalAllocator.RequestPage();
+            uint64_t address = (uint64_t)cmdTableAddress + (i << 8);
+            cmdHeader[i].ctba = (uint32_t)(uint64_t)address;
+            cmdHeader[i].ctbau = (uint32_t)((uint64_t)address >> 32);
+            memset(cmdTableAddress, 0, 256);
+        }
  
 	startCmd(port);	// Start command engine
 }
@@ -118,12 +112,15 @@ void ProbePort(HBAMem* abar)
                 char* buff = (char*)GlobalAllocator.RequestPage();
                 memset(buff, 0, 0x1000);
 
-                if (read(&abar->ports[i], (uint32_t)0, (uint32_t)(0 >> 32), 1, buff))
+                GlobalRenderer->PrintNL(to_hstring((uint64_t)&abar->ports[0].is));
+
+                if (read(&abar->ports[0], 0, 1, 20, buff))
                 {
                     GlobalRenderer->PrintNL("Successfully read");
                     for (int t = 0; t < 1024; t++){
-                        GlobalRenderer->PutChar(buff[t]);
+                        GlobalRenderer->Print(to_string((int64_t)buff[t]));
                     }
+                    GlobalRenderer->NextLine();
                 }
             }
             else if (dt == AHCI_DEV_SATAPI)
@@ -165,75 +162,73 @@ int find_cmdslot(HBAPort *port)
 	return -1;
 }
 
-bool read(HBAPort *port, uint32_t startl, uint32_t starth, uint32_t count, void* buf)
+bool read(HBAPort *port, uint32_t startl, uint32_t starth, uint32_t count, char* buf)
 {
-    uint64_t sector = 0;
-	uint32_t sectorL = (uint32_t) sector;
-        uint32_t sectorH = (uint32_t) (sector >> 32);
-
-        int slot = find_cmdslot(port);
-        if (slot == -1)
-            return false;
-
-        port->is = (uint32_t)-1; // Clear pending interrupt bits
-
-        HBA_CMD_HEADER* cmdHeader = (HBA_CMD_HEADER*)port->clb;
-        cmdHeader += slot;
-        cmdHeader->cfl = sizeof(FIS_REG_H2D)/ sizeof(uint32_t); //command FIS size;
-        cmdHeader->w = 0; //this is a read
-        cmdHeader->prdtl = 1;
-
-        HBA_CMD_TBL* commandTable = (HBA_CMD_TBL*)(cmdHeader->ctba);
-        memset(commandTable, 0, sizeof(HBA_CMD_TBL) + (cmdHeader->prdtl-1)*sizeof(HBA_PRDT_ENTRY));
-
-        int i;
-        // 8K bytes (16 sectors) per PRDT
-        for (i=0; i<cmdHeader->prdtl-1; i++)
-        {
-            commandTable->prdt_entry[i].dba = (uint32_t)(uint64_t)buf;
-            commandTable->prdt_entry[i].dbau = (uint32_t)(uint64_t)(buf) >> 32;
-            commandTable->prdt_entry[i].dbc = 8*1024; // 8K bytes
-            commandTable->prdt_entry[i].i = 1;
-            buf += 4*1024;  // 4K words
-            count -= 16;    // 16 sectors
-        }
-        // Last entry
-        commandTable->prdt_entry[i].dba = (uint32_t)(uint64_t)buf;
-        commandTable->prdt_entry[i].dbau = (uint32_t)(uint64_t)(buf) >> 32;
-        //printk("dba & dbau: %p %p\n", commandTable ->prdt_entry[i].dba, commandTable -> prdt_entry[i].dbau);
-        commandTable->prdt_entry[i].dbc = count<<9;   // 512 bytes per sector
-        commandTable->prdt_entry[i].i = 1;
-
-        FIS_REG_H2D* cmdFIS = (FIS_REG_H2D*)(&commandTable->cfis);
-
-        cmdFIS->fis_type = FIS_TYPE_REG_H2D;
-        cmdFIS->control = 1; // command
-        cmdFIS->command = ATA_CMD_READ_DMA_EX;
-
-        cmdFIS->lba0 = (uint8_t)sectorL;
-        cmdFIS->lba1 = (uint8_t)(sectorL>>8);
-        cmdFIS->lba2 = (uint8_t)(sectorL>>16);
-        cmdFIS->device = 1<<6;	// LBA mode
+    port->is = (uint32_t) -1;		// Clear pending interrupt bits
+	int spin = 0; // Spin lock timeout counter
+	int slot = find_cmdslot(port);
+	if (slot == -1)
+		return false;
+ 
+	HBA_CMD_HEADER *cmdheader = (HBA_CMD_HEADER*)(uint64_t)port->clb;
+	cmdheader += slot;
+	cmdheader->cfl = sizeof(FIS_REG_H2D)/sizeof(uint32_t);	// Command FIS size
+	cmdheader->w = 0;		// Read from device
+	cmdheader->prdtl = (uint16_t)((count-1)>>4) + 1;	// PRDT entries count
+ 
+	HBA_CMD_TBL *cmdtbl = (HBA_CMD_TBL*)(uint64_t)(cmdheader->ctba);
+	memset(cmdtbl, 0, sizeof(HBA_CMD_TBL) +
+ 		(cmdheader->prdtl-1)*sizeof(HBA_PRDT_ENTRY));
     
-        cmdFIS->lba3 = (uint8_t)(sectorH>>24);
-        cmdFIS->lba4 = (uint8_t)sectorH;
-        cmdFIS->lba5 = (uint8_t)(sectorH>>8);
-
-        cmdFIS->countl = count & 0xFF;
-        cmdFIS->counth = (count >> 8) & 0xFF;
-
-        uint64_t spin = 0;
-
-        while ((port->tfd & (ATA_DEV_BUSY | ATA_DEV_DRQ)) && spin < 1000000){
-            spin ++;
-        }
-        if (spin == 1000000) {
-            return false;
-        }
-
-    port->ci = 1<<slot;	// Issue command
+    int i;
+	// 8K bytes (16 sectors) per PRDT
+	for (int i=0; i<cmdheader->prdtl-1; i++)
+	{
+		cmdtbl->prdt_entry[i].dba = (uint32_t)(uint64_t)buf;
+		cmdtbl->prdt_entry[i].dbc = 8*1024-1;	// 8K bytes (this value should always be set to 1 less than the actual value)
+		cmdtbl->prdt_entry[i].i = 1;
+		buf += 4*1024;	// 4K words
+		count -= 16;	// 16 sectors
+	}
+	// Last entry
+	cmdtbl->prdt_entry[i].dba = (uint32_t)(uint64_t)buf;
+	cmdtbl->prdt_entry[i].dbc = (count<<9)-1;	// 512 bytes per sector
+	cmdtbl->prdt_entry[i].i = 1;
+ 
+	// Setup command
+	FIS_REG_H2D *cmdfis = (FIS_REG_H2D*)(&cmdtbl->cfis);
+ 
+	cmdfis->fis_type = FIS_TYPE_REG_H2D;
+	cmdfis->c = 1;	// Command
+	cmdfis->command = ATA_CMD_READ_DMA_EX;
+ 
+	cmdfis->lba0 = (uint8_t)startl;
+	cmdfis->lba1 = (uint8_t)(startl>>8);
+	cmdfis->lba2 = (uint8_t)(startl>>16);
+	cmdfis->device = 1<<6;	// LBA mode
+ 
+	cmdfis->lba3 = (uint8_t)(startl>>24);
+	cmdfis->lba4 = (uint8_t)starth;
+	cmdfis->lba5 = (uint8_t)(starth>>8);
+ 
+	cmdfis->countl = count & 0xFF;
+	cmdfis->counth = (count >> 8) & 0xFF;
+ 
+	// The below loop waits until the port is no longer busy before issuing a new command
+	while ((port->tfd & (ATA_DEV_BUSY | ATA_DEV_DRQ)) && spin < 1000000)
+	{
+		spin++;
+	}
+	if (spin == 1000000)
+	{
+		GlobalRenderer->PrintNL("Port is hung\n");
+		return false;
+	}
+ 
+	port->ci = 1<<slot;	// Issue command
+ 
 	// Wait for completion
-	while (true)
+	while (1)
 	{
 		// In some longer duration reads, it may be helpful to spin on the DPS bit 
 		// in the PxIS port field as well (1 << 5)
@@ -245,13 +240,17 @@ bool read(HBAPort *port, uint32_t startl, uint32_t starth, uint32_t count, void*
 			return false;
 		}
 	}
+    
 
-        if (port->is & HBA_PxIS_TFES)
-        {
-            GlobalRenderer->PrintNL("Read disk error\n");
-            return false;
-        }
+    GlobalRenderer->PrintNL(to_hstring((uint64_t)port->is));
 
-        return true;
+	// Check again
+	if (port->is & HBA_PxIS_TFES)
+	{
+		GlobalRenderer->PrintNL("Read disk error here");
+		return false;
+	}
+ 
+	return true;
 }
  

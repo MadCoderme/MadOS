@@ -183,4 +183,4 @@ struct FIS_REG_H2D
 
 void ProbePort(HBAMem* abar);
 void PortRebase(HBAPort *port, int portno);
-bool read(HBAPort *port, uint32_t startl, uint32_t starth, uint32_t count, void *buf);
+bool read(HBAPort *port, uint32_t startl, uint32_t starth, uint32_t count, char* buf);

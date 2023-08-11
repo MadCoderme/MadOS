@@ -1,14 +1,16 @@
 #include "kernelUtil.h"
+#include "processes/terminal/interface.h"
 
 extern "C" void _start(BootInfo* bootInfo) {
 
 
     KernelInfo kernelInfo = InitializeKernel(bootInfo);
-    GlobalRenderer->Print("Kernel Initialized");
-
+    //GlobalRenderer->Clear(0x272829);
+    GlobalRenderer->PrintNL("--- MadOS ---");
     GlobalRenderer->NextLine();
+    GlobalRenderer->NextLine();
+    InitializeTerminal();
     
-    // asm("int $0x21");
     while (true)
     {
         asm ("hlt");

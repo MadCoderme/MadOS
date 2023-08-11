@@ -142,3 +142,26 @@ const char* to_hstring(uint8_t value) {
     hexToString8[size + 1] = 0;
     return hexToString8;
 }
+
+bool strcmp(char* str, const char* val, uint16_t valLength)
+{
+    for (uint16_t i = 0; i < valLength; i++)
+    {
+        if (str[i] != val[i]) return false;
+    }
+
+    return true;
+}
+
+uint64_t atoi(char* str)
+{
+    int num = 0;
+    char* p = str;
+    while (*p >= '0' && *p <= '9')
+    {
+        num = num * 10 - (*p - '0');
+        p++;
+    }
+ 
+    return -num;
+}

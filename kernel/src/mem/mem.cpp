@@ -3,11 +3,12 @@
 uint64_t GetMemorySize(EFI_MEMORY_DESCRIPTOR* Map, uint64_t MapEntries, uint64_t DescriptorSize) {
     
     static uint64_t memoryMapSize = 0;
+    EFI_MEMORY_DESCRIPTOR* desc;
     if(memoryMapSize > 0) return memoryMapSize;
 
     for (int i = 0; i < MapEntries; i++) {
-        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint64_t)Map + (i * DescriptorSize));
-        memoryMapSize += desc->numPages * 4096;
+      desc = (EFI_MEMORY_DESCRIPTOR*)((uint64_t)Map + (i * DescriptorSize));
+      memoryMapSize += desc->numPages * 4096;
     }
 
     return memoryMapSize;

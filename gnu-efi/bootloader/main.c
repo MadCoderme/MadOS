@@ -252,12 +252,10 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	}
 
 	EFI_STATUS status;
-	EFI_MEMORY_DESCRIPTOR *EfiMemoryMap;
+	EFI_MEMORY_DESCRIPTOR *EfiMemoryMap = NULL;
 	UINTN MapSize, MapKey, DescriptorSize;
 	UINT32 DescriptorVersion;
 
-	MapSize = 0;
-	EfiMemoryMap = NULL;
 	{
 		SystemTable->BootServices->GetMemoryMap(&MapSize, EfiMemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion);
 		SystemTable->BootServices->AllocatePool(EfiLoaderData, MapSize, (void**)&EfiMemoryMap);

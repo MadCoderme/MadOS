@@ -19,7 +19,21 @@ const char ASCIITable[] = {
          0 , ' '
 };
 
+bool isEnabled = false;
 bool upperCase = false;
+char* input;
+unsigned int inputLen;
+
+void EnableKeyboard(bool willEnable)
+{
+    isEnabled = willEnable;
+}
+
+void ReceiveInput(char* c)
+{
+    inputLen = 0;
+    input = c;
+}
 
 void TranslateScancode(uint8_t byte)
 {
@@ -35,11 +49,16 @@ void TranslateScancode(uint8_t byte)
             c = ASCIITable[byte] - 32;
 
         GlobalRenderer->PutChar(c);
+        *input = c;
+        *input++;
+        inputLen++;
     }
 }
 
 void HandleKeyboard()
 {
+    if (!isEnabled) return;
+
     uint8_t scancode = inb(0x60);
 
     switch (scancode)
@@ -51,10 +70,18 @@ void HandleKeyboard()
         upperCase = true;
         break;
     case 0xf: 
-      for (int i = 0; i < 4; i++) GlobalRenderer->PutChar(' ');
-      break;
+        for (int i = 0; i < 4; i++) GlobalRenderer->PutChar(' ');
+        break;
+    case 0x0E:
+        if (inputLen == 0) return;
+        *input--;
+        *input = NULL;
+        inputLen--;
+        GlobalRenderer->RemoveChar();
+        break;
     case 0x1C:
         GlobalRenderer->NextLine();
+        EnterHandler();
         break;
     default:
         TranslateScancode(scancode);

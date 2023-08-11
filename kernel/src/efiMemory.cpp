@@ -6,13 +6,13 @@ const char* EFI_MEMORY_TYPE_STRINGS[] = {
     "EfiLoaderData",
     "EfiBootServicesCode",
     "EfiBootServicesData",
-    "EfiRuntimeServiceCode",
-    "EfiRuntimeServicesData",
+    "EfiRuntimeServiceCode", //
+    "EfiRuntimeServicesData", //
     "EfiConventionalMemory",
-    "EfiUnusableMemory",
+    "EfiUnusableMemory", //
     "EfiACPIReclaimMemory",
-    "EfiACPIMemoryNVS",
-    "EfiMemoryMappedIO",
-    "EfiMemoryMappedIOPortSpace",
+    "EfiACPIMemoryNVS", //
+    "EfiMemoryMappedIO", //
+    "EfiMemoryMappedIOPortSpace", //
     "EfiPalCode"
 };

@@ -52,6 +52,15 @@ void BasicRenderer::PutChar(char ch) {
         
 }
 
+void BasicRenderer::RemoveChar() {
+    for( unsigned int y = CursorPosition.y; y < CursorPosition.y + 16; y++) {
+        for (unsigned int x = CursorPosition.x; x > CursorPosition.x - 8; x--) {
+            *(unsigned int*)((unsigned int*)TargetFrameBuffer->BaseAddress + x + (y * TargetFrameBuffer->PixelsPerScanline)) = 0x272829;
+        }
+    } 
+    CursorPosition.x -= 8; 
+}
+
 void BasicRenderer::Print(const char* str) {
     char* chr = (char*)str;
     while(*chr != 0) {
